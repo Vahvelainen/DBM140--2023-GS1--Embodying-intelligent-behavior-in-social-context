@@ -178,9 +178,12 @@ class SARSA:
 
 class StateVar:
   '''
-  Class for state variables for States in SARSA
+  Class for state variables for States in SARSA. Arguments: 
+  1. Name of the variable
+  2. List of options
+  3. Index of initial option (optional, default = 0)
   '''
-  def __init__(self, name: str, options: list, currentIndex = 0) -> None:
+  def __init__(self, name: str, options: list[ str ], currentIndex = 0) -> None:
     self.name = name
     self.options = options
     self.current = options[ currentIndex ]
@@ -199,6 +202,20 @@ class StateVar:
     Returns index of current option
     '''
     return self.options.index(self.current)
+  
+  def set(self, option: str) -> bool:
+    '''
+    Sets variable based on name of the option. 
+    Returns false if option not found
+    '''
+    index = self.options( option )
+    return self.setIndex(index)
+  
+  def get(self) -> str:
+    '''
+    Returns current option
+    '''
+    return self.current
   
   def copy(self):
     '''
