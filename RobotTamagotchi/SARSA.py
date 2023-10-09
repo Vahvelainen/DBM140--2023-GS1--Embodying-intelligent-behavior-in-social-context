@@ -105,7 +105,7 @@ class SARSA:
   6. Learning rate (optional, default 0.85) 
   7. Discount factor (optiona, default 0.95)
   '''
-  def __init__(self, state: State, actions: list[ Action ], initialPolicy: np.matrix, stateSpace: None, epsilon = 0.9, alpha = 0.85, gamma = 0.95) -> None:
+  def __init__(self, state: State, actions: list[ Action ], initialPolicy: np.matrix, stateSpace = None, epsilon = 0.9, alpha = 0.85, gamma = 0.95) -> None:
     self.actions = actions
     self.epsilon = epsilon
     self.alpha = alpha
