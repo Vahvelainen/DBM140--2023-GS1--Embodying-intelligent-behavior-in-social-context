@@ -15,6 +15,18 @@ possible state. However, State.getStateSpace() can be used instead
 
 INTENDED USE:
 
+  #Define actions
+  actions = [ Action(), ..., Action() ]
+
+  #Create State and variables
+  state = State([ StateVar(), ..., StateVar() ])
+
+  #Create policy with initial values
+  policy = Policy( state.getStateSpace(), actions, np.matrix( q[state, action] ) )
+
+  #Create Sarsa with state and policy
+  sarsa = SARSA(state, policy)  
+
   #Set intitial reward and loop
   reward = 0
   while running:
@@ -79,42 +91,22 @@ class State:
   
   def copy(self):
     return State( list( var.copy() for var in self.variables ) )
-
-    
-class Policy:
-  '''
-  Representation of the Q-table as a policy
-  very hard to decide how to implement this
-  Needs:
-  - states (list, can generate from a state?)
-  - actions (list)
-  - Q-matrix np.matrix of [state][action]
-  '''
-  # Maybe dictionary is better than matrix or idk
-  # Matrix works well anough
-  def __init__(self, stateSpace: list[ State ], actions: list[ Action ], initialPolicy: np.matrix ) -> None:
-    self.actions = actions
-    self.stateSpace = stateSpace
-    self.Q = initialPolicy
-
-  def bestAction(self, state: State) -> Action:
-    '''
-    Select the highest scoring action for state
-    '''
-    stateIndex = self.stateSpace.index(state)
-    return self.actions[ np.argmax( self.Q[stateIndex] ) ]
-
-  def __str__(self) -> str:
-    return str(self.Q)
   
 class SARSA:
   '''
-  Class for running the SARSA algorithm
-  use .update() to adjust Q table and select next action
+  Class for running the SARSA algorithm. 
+  Use .update() to adjust Q table and select next action. 
+  Arguments: 
+  1. State object, 
+  2. List of actions, 
+  3. Initial policy as numpy matrix, 
+  4. State space (optional, default all combinations)
+  5. Exploration rate (optional, default 0.9) 
+  6. Learning rate (optional, default 0.85) 
+  7. Discount factor (optiona, default 0.95)
   '''
-  def __init__(self, state: State, initialPolicy: Policy, epsilon = 0.9, alpha = 0.85, gamma = 0.95) -> None:
-    self.policy = initialPolicy
-    self.actions = initialPolicy.actions
+  def __init__(self, state: State, actions: list[ Action ], initialPolicy: np.matrix, stateSpace: None, epsilon = 0.9, alpha = 0.85, gamma = 0.95) -> None:
+    self.actions = actions
     self.epsilon = epsilon
     self.alpha = alpha
     self.gamma = gamma
@@ -124,10 +116,25 @@ class SARSA:
     self.prevState = None #Previous state (before action)
     self.prevAction = None #Previous previousAction
 
+    self.actions = actions
+    if ( stateSpace == None ):
+      self.stateSpace = state.getStateSpace()
+    else:
+      self.stateSpace = stateSpace
+    self.Q = initialPolicy
+
+  def bestAction(self, state: State) -> Action:
+    '''
+    Select the highest scoring action for state
+    '''
+    stateIndex = self.stateSpace.index(state)
+    return self.actions[ np.argmax( self.Q[stateIndex] ) ]
+
   def chooseAction(self) -> Action:
     '''
-    Epsilon greedy choosing of action
-    Should not be used outside update function
+    Epsilon greedy choosing of action. 
+    Chooses random action epsilon times out of one. 
+    Should not be used outside update function. 
     '''
     # Exploration vs exploitation
     if np.random.uniform(0, 1) < self.epsilon:
@@ -135,28 +142,28 @@ class SARSA:
       action = np.random.choice( self.actions )
     else:
       # Exploit: select the action with the highest Q-value
-      action = self.policy.bestAction(self.state)
+      action = self.bestAction(self.state)
     return action
-
 
   def update(self, reward: float) -> Action:
     '''
-    Updates the Q values based on reward
-    Return action to be used next
-    Assumes:
-    1.) Last returned action is happened and observed before running
-    2.) State is updated
-    3.) Reward is somewhat related to the action
+    Updates the Q values based on reward. 
+    Return action to be used next. 
+    Assumes: 
+    1.) Last returned action is happened and observed before running. 
+    2.) State is updated. 
+    3.) Reward is somewhat related to the action. 
     '''
     self.prevAction = self.nextAction
     self.nextAction = self.chooseAction()
 
     #Skips the first run, but should it?
     if self.prevAction and self.prevState:
-      Q = self.policy.Q
-      s = self.policy.stateSpace.index(self.prevState)
+      Q = self.Q
+      #Index hunting
+      s = self.stateSpace.index(self.prevState)
       a = self.actions.index(self.prevAction)
-      s2 = self.policy.stateSpace.index(self.state)
+      s2 = self.stateSpace.index(self.state)
       a2 = self.actions.index(self.nextAction)
       #Update Q values
       predict = Q[s, a]
@@ -167,7 +174,7 @@ class SARSA:
     return self.nextAction
 
   def __str__(self) -> str:
-    return str( self.policy) 
+    return str(self.Q) 
 
 class StateVar:
   '''
@@ -206,28 +213,14 @@ class StateVar:
   def __str__(self) -> str:
     #Might add bracets later
     return self.name + ': ' +  self.current
-
-  
-class StateVarOption:
-  '''
-  Basically a string,
-  Not in use currently
-  '''
-  def __init__(self, name) -> None:
-    self.name = name
-
-  def __hash__(self) -> int:
-    return hash(self.name)
-  
-  def __str__(self) -> str:
-    return self.name + ':' 
   
 
 def createStateSpace( stateVariables: list[ StateVar ] ) -> list[ State ]:
   '''
-  Creates a state space from all the possible variations of the variable
-  Does not alter the original
-  1. param is a lsit of State variables
+  Creates a state space from all the possible variations of the variable. 
+  Does not alter the original. 
+  1. param is a list of State variables. 
+  Outputs list of states. 
   '''
   vars = [] #Copied list to not alter the original
   stateCount = 1
