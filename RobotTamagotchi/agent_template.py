@@ -6,22 +6,11 @@
 '''
 
 # Import state space variables
-from SARSA import Action, State, StateVar #Import classes fo types
+from SARSA import Action, State, StateVar #Import classes of types
 
 class Agent:
   def __init__(self) -> None:
-    self.task_done_rounds = 0
-
-  def updateTask(self, task: StateVar):
-    '''
-    Reset task after 10 rounds its being done
-    Isnt really necessary to be included in the agent
-    Maybe should be made to dedicated class? Propably.
-    '''
-    if (task.value == 'Done'):
-      self.task_done_rounds += 1
-    if(self.task_done_rounds > 10):
-      task.set('Undone')
+    pass
 
   def react(self, action: Action, state: State) -> str:
     '''
@@ -30,8 +19,6 @@ class Agent:
     '''
     engagement = state.getVar('Engagement')
     task = state.getVar('Task')
-
-    self.updateTask(task)
 
     if ( action == 'Sleep' ):
       engagement.set('Lo')
@@ -42,7 +29,7 @@ class Agent:
       return 'Child is now paying attention'
 
     if ( action == 'Exited' and engagement.value == 'Hi' ):
-      if (task != 'Done'):
+      if (task.value != 'Done'):
         task.set('Done')
         self.task_done_rounds = 0
         return 'Child feeds the bunny, task is done!!!'

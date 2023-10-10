@@ -14,6 +14,12 @@ reward = 0
 for step_index in range(steps_N):
   print('\nSTEP ' + str(step_index))
 
+  #Set Task Undone avery 10th step
+  if ( step_index%10 == 0):
+    task = sarsa.state.getVar('Task')
+    print('It is time for a new task. Previous task: ' + task.value )
+    task.set('Undone')
+
   #calculate changes to Q table for last action taken and return new action
   action = sarsa.update(reward)
   print( action.description )
