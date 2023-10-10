@@ -1,17 +1,16 @@
 
-from bunny import Bunny, initial_policy, rewardFunction
+from bunny import Bunny
 
 from agent_template import Agent
 
-sarsa = Bunny
+sarsa = Bunny()
 agent = Agent()
 
 steps_N = 100
 
-initial_policy = initial_policy.copy()
+initial_policy = sarsa.Q.copy()
 
 reward = 0
-prevState = sarsa.state.copy()
 for step_index in range(steps_N):
   print('\nSTEP ' + str(step_index))
 
@@ -26,10 +25,8 @@ for step_index in range(steps_N):
   #wait for the effect
   print( sarsa.state )
 
-  #calculate reward, use whatever variables needed
-  currState = sarsa.state.copy()
-  reward = rewardFunction(currState, prevState)
-  prevState = currState
+  #calculate reward
+  reward = sarsa.rewardFunction()
   print('Reward: ' + str(reward))
 
 print('\nInitial Policy:\n')

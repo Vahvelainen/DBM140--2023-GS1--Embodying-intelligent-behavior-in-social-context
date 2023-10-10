@@ -165,8 +165,8 @@ class SARSA:
     self.gamma = gamma
 
     self.state = state #Current state
+    self.prevState = state #Previous state (before action)
     self.nextAction = None 
-    self.prevState = None #Previous state (before action)
     self.prevAction = None #Previous previousAction
 
     self.actions = actions
