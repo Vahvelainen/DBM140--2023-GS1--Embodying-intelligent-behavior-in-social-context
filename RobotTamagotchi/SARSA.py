@@ -62,7 +62,55 @@ class Action:
     return hash(self.name)
   
   def __eq__(self, other: object) -> bool:
-    return str(self) == str(other)
+    return self.name == str(other)
+  
+  def __str__(self) -> str:
+    return self.name
+  
+class StateVar:
+  '''
+  Class for state variables for States in SARSA. Arguments: 
+  1. Name of the variable
+  2. List of options
+  3. Index of initial option (optional, default = 0)
+  '''
+  def __init__(self, name: str, options: list[ str ], currentIndex = 0) -> None:
+    self.name = name
+    self.options = options
+    self.value = options[ currentIndex ]
+
+  def setIndex(self, index) -> bool:
+    '''
+    Returns false if index is out of bounds
+    '''
+    if not index in range( len( self.options ) ):
+      return False
+    self.value = self.options[ index ]
+    return True
+
+  def getIndex(self) -> int:
+    '''
+    Returns index of current option
+    '''
+    return self.options.index(self.value)
+  
+  def set(self, option: str) -> bool:
+    '''
+    Sets variable based on name of the option. 
+    Returns false if option not found
+    '''
+    index = self.options.index( option )
+    return self.setIndex(index)
+  
+  def copy(self):
+    return StateVar( self.name, self.options, self.getIndex() )
+  
+  def __str__(self) -> str:
+    return self.name + ': ' +  self.value
+  
+  def __eq__(self, other: object) -> bool:
+    #For State.getVar to work
+    return self.name == str(other)
 
 class State:
   '''
@@ -70,9 +118,6 @@ class State:
   '''
   def __init__(self, variables: list) -> None:
     self.variables = variables
-
-  def __hash__(self) -> int:
-    return hash( self.__str__ )
 
   def __str__(self) -> str:
     # Convert each element to a string using list comprehension
@@ -88,6 +133,14 @@ class State:
       Return
       '''
       return createStateSpace(self.variables)
+  
+  def getVar(self, variable_name: str) -> StateVar:
+    '''
+    Returns Variable based on its name. 
+    Raises ValueError if variable is not in state.
+    '''
+    index = self.variables.index(variable_name)
+    return self.variables[index]
   
   def copy(self):
     return State( list( var.copy() for var in self.variables ) )
@@ -175,62 +228,6 @@ class SARSA:
 
   def __str__(self) -> str:
     return str(self.Q) 
-
-class StateVar:
-  '''
-  Class for state variables for States in SARSA. Arguments: 
-  1. Name of the variable
-  2. List of options
-  3. Index of initial option (optional, default = 0)
-  '''
-  def __init__(self, name: str, options: list[ str ], currentIndex = 0) -> None:
-    self.name = name
-    self.options = options
-    self.current = options[ currentIndex ]
-
-  def setIndex(self, index) -> bool:
-    '''
-    Returns false if index is out of bounds
-    '''
-    if not index in range( len( self.options ) ):
-      return False
-    self.current = self.options[ index ]
-    return True
-
-  def getIndex(self) -> int:
-    '''
-    Returns index of current option
-    '''
-    return self.options.index(self.current)
-  
-  def set(self, option: str) -> bool:
-    '''
-    Sets variable based on name of the option. 
-    Returns false if option not found
-    '''
-    index = self.options( option )
-    return self.setIndex(index)
-  
-  def get(self) -> str:
-    '''
-    Returns current option
-    '''
-    return self.current
-  
-  def copy(self):
-    '''
-    Returns new instance of it self
-    '''
-    return StateVar( self.name, self.options, self.getIndex() )
-
-  def __hash__(self) -> int:
-    #Not sure if this is a.) necessary b.) working with only the name
-    return hash(self.name)
-  
-  def __str__(self) -> str:
-    #Might add bracets later
-    return self.name + ': ' +  self.current
-  
 
 def createStateSpace( stateVariables: list[ StateVar ] ) -> list[ State ]:
   '''
