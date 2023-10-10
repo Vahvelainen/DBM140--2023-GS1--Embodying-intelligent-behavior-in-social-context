@@ -61,8 +61,11 @@ class Bunny(SARSA):
     '''
     Reward function gives rewards based on changes in states
     '''
-    # Its not ideal that the reward functions doesnt feed to the update function atm. 
+    # In this case reward is only based on state variables but in reality they don't need to be connected at all
+
+    # Its not ideal that the reward functions doesnt feed to the update function regardless being in same class
     # Buuut its acceptalbe for narrative purposes in the main loop
+    # Reward function is part of the bunny bc it defines the "implementation" as a whole and its convinient.
 
     curr_task = self.state.getVar('Task')
     prev_task = self.prevState.getVar('Task')
@@ -70,17 +73,20 @@ class Bunny(SARSA):
     curr_engagement = self.state.getVar('Engagement')
     prev_engagement = self.prevState.getVar('Engagement')
 
+    # Big reward if task changed to Done
     if (curr_task.value == 'Done' and
         prev_task.value != 'Done'):
       return 5
     
+    #Small reward if engagement went Hi and task needs to be done
     if (curr_engagement.value == 'Hi' and
         prev_engagement.value != 'Hi' and
         curr_task.value != 'Done'):
       return 1
 
-    if (curr_engagement.value != 'Hi' and
-        prev_engagement.value == 'Hi' and
+    #Punishment if engagement went Lo and task needs to be done
+    if (curr_engagement.value == 'Lo' and
+        prev_engagement.value != 'Lo' and
         curr_task.value != 'Done'):
       return -1
     

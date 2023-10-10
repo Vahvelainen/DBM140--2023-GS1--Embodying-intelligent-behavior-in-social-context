@@ -1,20 +1,23 @@
 
 '''
-  Template for user ugents with different behaviors
+  Template for user agents with different behaviors
   Should react to different bunny actions + have some varying behaviour logic
   Outputs valence and engagement values
+
+  In the future could be extended to give values to reward function outside the state
 '''
 
 # Import state space variables
-from SARSA import Action, State, StateVar #Import classes of types
+from SARSA import Action, State, StateVar #Import classes for types
 
 class Agent:
   def __init__(self) -> None:
+    #Init function can be used eg. to store previous states and actions
     pass
 
   def react(self, action: Action, state: State) -> str:
     '''
-    React to the action chosen by sarsa
+    React to the action chosen by SARSA by altering state
     Actions and states needs to be mathed to the ones from Bunny.py
     '''
     engagement = state.getVar('Engagement')
