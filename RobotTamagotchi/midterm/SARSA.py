@@ -69,7 +69,9 @@ class Action:
   
 class StateVar:
   '''
-  Class for state variables for States in SARSA. Arguments: 
+  Class for state variables for States in SARSA. 
+  Name property is used to differenciate. StateVar.value tells current value. 
+  Arguments: 
   1. Name of the variable
   2. List of options
   3. Index of initial option (optional, default = 0)
