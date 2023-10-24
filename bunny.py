@@ -46,28 +46,34 @@ class Bunny(SARSA):
     # Create policy with initial values
     # This could be better if it would just be selecting action per state, idk why matrix was a good idea
     initialPolicy = np.matrix([
+      #Simplified initial policy:
+      # Needy if task undone and child unaware
+      # Curious if task undone and child aware
+      # Anticipating if task undone and chilg engaging
+      # Gratefull if task done
+
       #Task undone
       #Needy, Deman, Cntnt, Cur, Foc, Antp, Hap, Grat, Joy, Exct
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Unaware, Task: Undone
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Unaware, Task: Undone
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Unaware, Task: Undone
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Aware, Task: Undone
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Aware, Task: Undone
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Aware, Task: Undone
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Engaged, Task: Undone
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Engaged, Task: Undone
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Engaged, Task: Undone
+      [  1.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Unaware, Task: Undone
+      [  1.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Unaware, Task: Undone
+      [  1.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Unaware, Task: Undone
+      [  0.0,   0.0,   0.0, 1.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Aware, Task: Undone
+      [  0.0,   0.0,   0.0, 1.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Aware, Task: Undone
+      [  0.0,   0.0,   0.0, 1.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Aware, Task: Undone
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  1.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Engaged, Task: Undone
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  1.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Engaged, Task: Undone
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  1.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Engaged, Task: Undone
       #Task done
       #Needy, Deman, Cntnt, Cur, Foc, Antp, Hap, Grat, Joy, Exct
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Unaware, Task: Done
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Unaware, Task: Done
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Unaware, Task: Done
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Aware, Task: Done
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Aware, Task: Done
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Aware, Task: Done
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Engaged, Task: Done
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Engaged, Task: Done
-      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  0.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Engaged, Task: Done
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  1.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Unaware, Task: Done
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  1.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Unaware, Task: Done
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  1.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Unaware, Task: Done
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  1.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Aware, Task: Done
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  1.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Aware, Task: Done
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  1.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Aware, Task: Done
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  1.0, 0.0, 0.0 ], # Valence: Neg, Engagement: Engaged, Task: Done
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  1.0, 0.0, 0.0 ], # Valence: Neutral, Engagement: Engaged, Task: Done
+      [  0.0,   0.0,   0.0, 0.0, 0.0,  0.0, 0.0,  1.0, 0.0, 0.0 ], # Valence: Pos, Engagement: Engaged, Task: Done
     ])
 
     #Call the original init function
