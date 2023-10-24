@@ -39,7 +39,6 @@ class Bunny(SARSA):
     valence_lvl = StateVar( 'Valence', ['Neg', 'Neutral', 'Pos'], 0)
     engagement_lvl = StateVar( 'Engagement', ['Unaware', 'Aware', 'Engaged'], 0)
     task_status = StateVar( 'Task', ['Undone', 'Done'], 0)
-    # 24 states, 10 impossible ones = practically 14
 
     # Create the state
     state = State([  valence_lvl, engagement_lvl, task_status ])
@@ -103,10 +102,9 @@ class Bunny(SARSA):
     if curr_task.value == 'Undone':
       #Reward based on engagement change (higher the better)
       engagementDiff = curr_engagement.getIndex() - prev_engagement.getIndex()
-      reward += engagementDiff #Could be used with multiplier if wanted to
+      reward += engagementDiff * 1.5 #Could be used with multiplier if wanted to
 
-    #Use max( valence, 1) to midigate the fact that index 0 means couldnt measure
-    valenceDiff = max(1, curr_valence.getIndex()) - max(1, prev_valence.getIndex())
+    valenceDiff = curr_valence.getIndex() - prev_valence.getIndex()
     reward += valenceDiff #Could be used with multiplier if wanted to
 
 
