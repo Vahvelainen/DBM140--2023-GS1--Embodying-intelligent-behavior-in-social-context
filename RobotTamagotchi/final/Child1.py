@@ -1,58 +1,24 @@
 import numpy as np
 
 '''
-  Template for user agents with different behaviors
+  Extension to template for user agents with different behaviors
   Should react to different bunny actions + have some varying behaviour logic
   Outputs valence and engagement values
-
-  In the future could be extended to give values to reward function outside the state
 '''
 
 # Import state space variables
+from Child_template import Child
 from SARSA import Action, State, StateVar #Import classes for types
 
-class Child1:
-  def __init__(self) -> None:
-    #Init function can be used eg. to store previous states and actions
-    self.prevState = None
-    pass
-
-  def parseReactionDescription(self, beginning, prevState: State, state: State):
-
-    responses = []
-    curr_valence = state.getVar('Valence').getIndex()
-    prev_valence = prevState.getVar('Valence').getIndex()
-    curr_engagement = state.getVar('Engagement').getIndex()
-    prev_engagement = prevState.getVar('Engagement').getIndex()
-    curr_task = state.getVar('Task').getIndex()
-    prev_task = prevState.getVar('Task').getIndex()
-
-    if curr_valence == 0 and prev_valence != 0:
-      responses.append('sad')
-    if curr_valence == 1 and prev_valence != 1:
-      responses.append('feeling neutral')
-    if curr_valence == 2 and prev_valence != 2:
-      responses.append('happy')
-
-    if curr_engagement == 0 and prev_engagement != 0:
-      responses.append('losing interest')
-    if curr_engagement == 1 and prev_engagement != 1:
-      responses.append('noticing the robot')
-    if curr_engagement == 2 and prev_engagement != 2:
-      responses.append('engaging with the robot')
-
-    if curr_task == 1 and prev_task != 1:
-      responses.append('petting the robot!')
-
-    if len(responses):
-      return beginning + ' and is now ' + ', and '.join(responses)
-    else:
-      return beginning
+class Child1(Child):
+  '''
+  Child with low attention span
+  '''
 
   def react(self, action: Action, state: State) -> str:
     '''
     React to the action chosen by SARSA by altering state
-    Actions and states needs to be mathed to the ones from Bunny.py
+    Actions and states needs to be matched to the ones from Bunny.py
     '''
     engagement = state.getVar('Engagement')
     task = state.getVar('Task')
