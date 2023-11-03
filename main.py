@@ -17,7 +17,7 @@ def rewardFunction():
   return sarsa.rewardFunction()
 
 #Simulation parameters
-steps_N = 40
+steps_N = 400
 task_reset_rate = 20
 
 reward = 0
